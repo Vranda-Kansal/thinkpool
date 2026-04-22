@@ -3,6 +3,7 @@ const connectDB = require("./config/database.js");
 const userModel = require("./models/user.js");
 const { validateSignUp } = require("./utils/validation.js");
 const bcrypt = require("bcrypt");
+const validator = require("validator");
 
 const app = express();
 app.use(express.json());
@@ -31,6 +32,28 @@ app.post("/signup", async (req, res) => {
     });
     await user.save();
     res.send("user added sucessfully");
+  } catch (err) {
+    res.status(501).send(err.message);
+  }
+});
+
+//login via email and password
+app.post("/login", async (req, res) => {
+  try {
+    const { emailId, password } = req.body;
+    if (!validator.isEmail(emailId)) {
+      throw new Error("enter a valid email");
+    }
+    const user = await userModel.findOne({ emailId: emailId });
+    if (!user) {
+      throw new Error("Invalid credential");
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new Error("Invalid credentials");
+    } else {
+      res.send("login successful");
+    }
   } catch (err) {
     res.status(501).send(err.message);
   }
