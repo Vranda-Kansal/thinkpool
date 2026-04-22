@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const validator = require("validator");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middlewares/auth");
 require("dotenv").config();
 
 const app = express();
@@ -65,12 +66,13 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/profile", async (req, res) => {
-  const { token } = req.cookies;
-  const decodeMessage = await jwt.verify(token, process.env.SECRET);
-  const { _id } = decodeMessage;
-  const user = await userModel.findById(_id);
-  res.send(user);
+app.get("/profile", userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+    res.send(user);
+  } catch (err) {
+    res.status(401).send("please login again");
+  }
 });
 
 //get all the users from db - get /feed
