@@ -57,7 +57,9 @@ app.post("/login", async (req, res) => {
     if (!isPasswordValid) {
       throw new Error("Invalid credentials");
     } else {
-      const token = await jwt.sign({ _id: user._id }, process.env.SECRET);
+      const token = await jwt.sign({ _id: user._id }, process.env.SECRET, {
+        expiresIn: "7d",
+      });
       res.cookie("token", token);
       res.send("login successful");
     }
