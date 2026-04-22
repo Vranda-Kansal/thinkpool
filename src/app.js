@@ -4,9 +4,13 @@ const userModel = require("./models/user.js");
 const { validateSignUp } = require("./utils/validation.js");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 connectDB()
   .then(() => {
@@ -52,11 +56,21 @@ app.post("/login", async (req, res) => {
     if (!isPasswordValid) {
       throw new Error("Invalid credentials");
     } else {
+      const token = await jwt.sign({ _id: user._id }, process.env.SECRET);
+      res.cookie("token", token);
       res.send("login successful");
     }
   } catch (err) {
     res.status(501).send(err.message);
   }
+});
+
+app.get("/profile", async (req, res) => {
+  const { token } = req.cookies;
+  const decodeMessage = await jwt.verify(token, process.env.SECRET);
+  const { _id } = decodeMessage;
+  const user = await userModel.findById(_id);
+  res.send(user);
 });
 
 //get all the users from db - get /feed
