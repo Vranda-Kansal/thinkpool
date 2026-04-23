@@ -45,7 +45,20 @@ authRouter.post("/login", async (req, res) => {
       res.send("login successful");
     }
   } catch (err) {
-    res.status(501).send(err.message);
+    res.status(401).send(err.message);
+  }
+});
+
+authRouter.post("/logout", (req, res) => {
+  try {
+    const { token } = req.cookies;
+    if (!token) {
+      throw new Error("first login then you can logout");
+    }
+    res.clearCookie("token");
+    res.send("logout successful");
+  } catch (err) {
+    res.status(401).send(err.message);
   }
 });
 
