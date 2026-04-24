@@ -18,7 +18,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
     const isAllowed = await validateProfileEditInfo(req);
     if (!isAllowed) {
       throw new Error(
-        "updating firstName,lastName,emailId,password,gender of these filed is not allowed if you want to change password visit to forget password",
+        "updating firstName,lastName,emailId,password of these filed is not allowed if you want to change password visit to forget password",
       );
     } else {
       const user = req.user;
