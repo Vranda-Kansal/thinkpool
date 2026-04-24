@@ -9,7 +9,15 @@ userRouter.get("/user/received/requests", userAuth, async (req, res) => {
     const allrequests = await Connection.find({
       toUserId: loggedInUser._id,
       status: "like",
-    });
+    }).populate("fromUserId", [
+      "firstName",
+      "lastName",
+      "age",
+      "gender",
+      "photoUrl",
+      "about",
+      "skills",
+    ]);
     if (!allrequests) {
       return res.json({ message: "no any pending requests" });
     }
