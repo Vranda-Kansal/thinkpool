@@ -59,4 +59,43 @@ requestRouter.post(
   },
 );
 
+//i have to write a api where user can either accept the request or reject the request
+//like he is clicking on single request and review it now he can either accept it or reject it
+//anyone can either accept o reject a single request
+//status - accepted, rejected
+
+requestRouter.post(
+  "/request/review/:status/:connectionId",
+  userAuth,
+  async (req, res) => {
+    try {
+      const loggedInUser = req.user;
+      const { status, connectionId } = req.params;
+
+      const ALLOWED_STATUS = ["accepted", "rejected"];
+      if (!ALLOWED_STATUS.includes(status)) {
+        return res.status(400).json({ message: "Status is not valid" });
+      }
+      const connectionReq = await Connection.findOne({
+        _id: connectionId,
+        toUserId: loggedInUser._id,
+        status: "like",
+      });
+      if (!connectionReq) {
+        return res
+          .status(400)
+          .json({ message: "No such connection request has been found" });
+      }
+      connectionReq.status = status;
+      await connectionReq.save();
+      res.json({
+        message: "connection request has been " + status,
+        data: connectionReq,
+      });
+    } catch (err) {
+      res.status(400).json(err.message);
+    }
+  },
+);
+
 module.exports = requestRouter;
