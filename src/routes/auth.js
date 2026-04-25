@@ -34,17 +34,38 @@ authRouter.post("/login", async (req, res) => {
     }
     const user = await userModel.findOne({ emailId: emailId });
     if (!user) {
-      throw new Error("Invalid credential");
+      throw new Error("User not found! please Sign Up");
     }
     const isPasswordValid = await user.validatePassword(password);
     if (!isPasswordValid) {
       throw new Error("Invalid credentials");
     } else {
       const token = await user.getJwtToken();
+      const {
+        _id,
+        firstName,
+        lastName,
+        age,
+        gender,
+        photoUrl,
+        emailId,
+        about,
+        skills,
+      } = user.toObject();
       res.cookie("token", token);
       res.json({
         message: "login successful",
-        data: user,
+        data: {
+          _id,
+          firstName,
+          lastName,
+          age,
+          gender,
+          photoUrl,
+          emailId,
+          about,
+          skills,
+        },
       });
     }
   } catch (err) {
