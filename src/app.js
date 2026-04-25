@@ -5,8 +5,15 @@ const authRouter = require("./routes/auth.js");
 const profileRouter = require("./routes/profile.js");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user.js");
+const cors = require("cors");
 
 const app = express();
+app.use(
+  cors({
+    origin: process.env.FRONTED_URL, // specific origin do
+    credentials: true, // ye bhi do
+  }),
+);
 app.use(express.json());
 app.use(cookieParser());
 
