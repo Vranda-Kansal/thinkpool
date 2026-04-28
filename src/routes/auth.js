@@ -12,6 +12,11 @@ authRouter.post("/signup", async (req, res) => {
 
     const hashpassword = await bcrypt.hash(password, 10);
 
+    const isUser = userModel.findOne({ emailId: emailId });
+    if (isUser) {
+      throw new Error("already have a account please login");
+    }
+
     const user = new userModel({
       firstName: firstName,
       lastName: lastName,
@@ -25,6 +30,12 @@ authRouter.post("/signup", async (req, res) => {
       message: "Sign Up successful",
     });
   } catch (err) {
+    if (err.code === 11000) {
+      // This is MongoDB's duplicate key error code
+      return res
+        .status(409)
+        .json({ message: "already have a account please login" });
+    }
     res.status(400).send(err.message);
   }
 });
