@@ -19,9 +19,13 @@ authRouter.post("/signup", async (req, res) => {
       password: hashpassword,
     });
     await user.save();
-    res.send("user added sucessfully");
+    const token = await user.getJwtToken();
+    res.cookie("token", token);
+    res.json({
+      message: "Sign Up successful",
+    });
   } catch (err) {
-    res.status(501).send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
@@ -45,8 +49,8 @@ authRouter.post("/login", async (req, res) => {
         _id,
         firstName,
         lastName,
-        age,
-        gender,
+        role,
+        linkedIn,
         photoUrl,
         emailId,
         about,
@@ -59,8 +63,8 @@ authRouter.post("/login", async (req, res) => {
           _id,
           firstName,
           lastName,
-          age,
-          gender,
+          role,
+          linkedIn,
           photoUrl,
           emailId,
           about,
@@ -80,7 +84,9 @@ authRouter.post("/logout", (req, res) => {
       throw new Error("first login then you can logout");
     }
     res.clearCookie("token");
-    res.send("logout successful");
+    res.json({
+      message: "Logout successful",
+    });
   } catch (err) {
     res.status(401).send(err.message);
   }

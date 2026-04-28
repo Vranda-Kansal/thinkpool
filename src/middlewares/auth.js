@@ -5,7 +5,7 @@ const userAuth = async (req, res, next) => {
   try {
     const { token } = req.cookies;
     if (!token) {
-      throw new Error("INvalid token");
+      throw new Error("Invalid token");
     }
     const decodeMessage = await jwt.verify(token, process.env.SECRET);
     const { _id } = decodeMessage;
@@ -16,8 +16,7 @@ const userAuth = async (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
-    console.log("err" + err.message);
-    res.status(401).send("err " + err.message);
+    res.status(401).send(err.message);
   }
 };
 module.exports = { userAuth };

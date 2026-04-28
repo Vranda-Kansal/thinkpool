@@ -4,16 +4,25 @@ const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
+const defaultPhotos = [
+  "https://res.cloudinary.com/dvvf3hesg/image/upload/q_auto/f_auto/v1777354762/profile2_ih6ywd.jpg",
+  "https://res.cloudinary.com/dvvf3hesg/image/upload/f_auto,q_auto/profile1_nezodp",
+  "https://res.cloudinary.com/dvvf3hesg/image/upload/q_auto/f_auto/v1777354531/profile3_h46stw.jpg",
+];
+
 const userSchema = new Schema(
   {
     firstName: {
       type: "String",
       required: true,
-      minLength: 4,
-      maxLength: 50,
+      minLength: 3,
+      maxLength: 20,
+      trim: true,
     },
     lastName: {
       type: "String",
+      maxLength: 20,
+      trim: true,
     },
     emailId: {
       type: "String",
@@ -32,32 +41,45 @@ const userSchema = new Schema(
       required: true,
       validate(value) {
         if (!validator.isStrongPassword(value)) {
-          throw new Error("enter a strong password");
+          throw new Error(`Password requirements:
+      • Minimum 8 characters
+      • At least 1 uppercase letter
+      • At least 1 lowercase letter
+      • At least 1 number
+      • At least 1 special character`);
         }
       },
     },
-    age: {
-      type: "Number",
+    role: {
+      type: String,
+      default: "Developer",
+      trim: true,
     },
-    gender: {
-      type: "String",
+    linkedIn: {
+      type: String,
       validate(value) {
-        if (!["male", "female", "others"].includes(value)) {
-          throw new Error("enter a valid gender");
+        if (!validator.isURL(value)) {
+          throw new Error("enter a valid linkedIn Url", value);
         }
       },
     },
     photoUrl: {
-      type: "String",
+      type: String,
+      default: () => {
+        const pick =
+          defaultPhotos[Math.floor(Math.random() * defaultPhotos.length)];
+        return pick;
+      },
       validate(value) {
         if (!validator.isURL(value)) {
-          throw new Error("enter a valid PHOTO", value);
+          throw new Error("Enter a valid photo URL");
         }
       },
     },
     about: {
       type: "String",
-      default: "This is the default about section",
+      trim: true,
+      default: "I am a Developer who can think, explore and grow",
     },
     skills: {
       type: [String],
