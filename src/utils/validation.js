@@ -14,12 +14,8 @@ const validateSignUp = (req) => {
   } else if (!validator.isEmail(emailId)) {
     throw new Error("enter a valid email Id");
   } else if (!validator.isStrongPassword(password)) {
-    throw new Error(`Password requirements:
-      • Minimum 8 characters
-      • At least 1 uppercase letter
-      • At least 1 lowercase letter
-      • At least 1 number
-      • At least 1 special character`);
+    throw new Error(`Password must be at least 8 characters.
+Include uppercase, lowercase, number & special character.`);
   }
 };
 

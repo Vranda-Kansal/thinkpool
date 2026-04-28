@@ -41,12 +41,8 @@ const userSchema = new Schema(
       required: true,
       validate(value) {
         if (!validator.isStrongPassword(value)) {
-          throw new Error(`Password requirements:
-      • Minimum 8 characters
-      • At least 1 uppercase letter
-      • At least 1 lowercase letter
-      • At least 1 number
-      • At least 1 special character`);
+          throw new Error(`Password must be at least 8 characters.
+Include uppercase, lowercase, number & special character.`);
         }
       },
     },
