@@ -12,7 +12,7 @@ authRouter.post("/signup", async (req, res) => {
 
     const hashpassword = await bcrypt.hash(password, 10);
 
-    const isUser = userModel.findOne({ emailId: emailId });
+    const isUser = await userModel.findOne({ emailId: emailId });
     if (isUser) {
       throw new Error("already have a account please login");
     }
