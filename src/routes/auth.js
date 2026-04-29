@@ -28,6 +28,7 @@ authRouter.post("/signup", async (req, res) => {
     res.cookie("token", token);
     res.json({
       message: "Sign Up successful",
+      data: user,
     });
   } catch (err) {
     if (err.code === 11000) {
