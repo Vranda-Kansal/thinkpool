@@ -20,20 +20,22 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   try {
     const isAllowed = await validateProfileEditInfo(req);
     if (!isAllowed) {
-      throw new Error("updating firstName, emailId, password is not allowed");
+      return res.status(404).json({
+        message: "updating firstName, emailId, password is not allowed",
+      });
     } else {
       const user = req.user;
       const updatedUser = await userModel.findByIdAndUpdate(
         user._id,
         {
-          role: req.body?.role || user.role,
+          role: req.body?.role,
           photoUrl: req.body?.photoUrl || user.photoUrl,
-          about: req.body?.about || user.about,
-          skills: req.body?.skills || user?.skills,
-          linkedIn: req.body?.linkedIn || user?.linkedIn,
-          lastName: req.body?.lastName || user?.lastName,
+          about: req.body?.about,
+          skills: req.body?.skills,
+          linkedIn: req.body?.linkedIn,
+          lastName: req.body?.lastName,
         },
-        { returnDocument: true },
+        { returnDocument: "after", runValidators: true },
       );
       if (!updatedUser) {
         return res
@@ -46,7 +48,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
       });
     }
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(500).json({ message: err.message });
   }
 });
 

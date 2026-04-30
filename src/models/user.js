@@ -50,12 +50,22 @@ Include uppercase, lowercase, number & special character.`);
       type: String,
       default: "Developer",
       trim: true,
+      set(value) {
+        if (value === undefined || value === null) return undefined; // not passed at all → default kicks in
+        if (typeof value !== "string") {
+          throw new Error("role must be a string");
+        }
+        return value; // empty string "" is valid → user cleared it
+      },
     },
     linkedIn: {
       type: String,
       validate(value) {
-        if (!validator.isURL(value)) {
-          throw new Error("enter a valid linkedIn Url", value);
+        if (
+          value &&
+          (!validator.isURL(value) || !value.includes("linkedin.com"))
+        ) {
+          throw new Error("enter a valid linkedIn URL");
         }
       },
     },
@@ -76,9 +86,34 @@ Include uppercase, lowercase, number & special character.`);
       type: "String",
       trim: true,
       default: "I am a Developer who can think, explore and grow",
+      set(value) {
+        if (value === undefined || value === null) return undefined; // not passed at all → default kicks in
+        if (typeof value !== "string") {
+          throw new Error("about must be a string");
+        }
+        return value; // empty string "" is valid → user cleared it
+      },
     },
     skills: {
-      type: [String],
+      type: [
+        {
+          id: { type: String, required: true, trim: true },
+          name: { type: String, required: true, trim: true },
+        },
+      ],
+      set(value) {
+        if (!Array.isArray(value)) {
+          throw new Error("skills must be an array");
+        }
+        if (
+          !value.every((item) => {
+            return typeof item?.name === "string";
+          })
+        ) {
+          throw new Error("each skill must be a string");
+        }
+        return value;
+      },
     },
   },
   {
@@ -103,6 +138,33 @@ userSchema.methods.validatePassword = async function (passwordInputByUser) {
   );
   return isPasswordValid;
 };
+// add this before module.exports
+userSchema.set("toJSON", {
+  transform: (doc, ret) => {
+    const {
+      _id,
+      firstName,
+      lastName,
+      role,
+      linkedIn,
+      photoUrl,
+      emailId,
+      about,
+      skills,
+    } = ret;
+    return {
+      _id,
+      firstName,
+      lastName,
+      role,
+      linkedIn,
+      photoUrl,
+      emailId,
+      about,
+      skills,
+    };
+  },
+});
 
 const userModel = mongoose.model("User", userSchema);
 module.exports = userModel;
