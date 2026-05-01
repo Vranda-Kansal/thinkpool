@@ -18,7 +18,7 @@ requestRouter.post(
 
       if (!ToUserId) {
         throw new Error(
-          "not able to find the userId to person to whom you want to send request",
+          "not able to find the userId of person to whom you want to send request",
         );
       }
 
@@ -38,8 +38,8 @@ requestRouter.post(
         ],
       });
       if (alreadysentConnection) {
-        return res.status(400).json({
-          message: "alrady request has been sent",
+        return res.status(404).json({
+          message: "Connection already exists",
           data: alreadysentConnection,
         });
       }

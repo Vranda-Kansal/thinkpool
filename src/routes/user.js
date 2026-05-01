@@ -12,10 +12,10 @@ userRouter.get("/user/received/requests", userAuth, async (req, res) => {
       toUserId: loggedInUser._id,
       status: "like",
     }).populate("fromUserId", [
+      "_id",
       "firstName",
       "lastName",
-      "age",
-      "gender",
+      "role",
       "photoUrl",
       "about",
       "skills",
@@ -47,22 +47,24 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       ],
     })
       .populate("fromUserId", [
+        "_id",
         "firstName",
         "lastName",
-        "age",
-        "gender",
+        "role",
         "photoUrl",
         "about",
         "skills",
+        "linkedIn",
       ])
       .populate("toUserId", [
+        "_id",
         "firstName",
         "lastName",
-        "age",
-        "gender",
+        "role",
         "photoUrl",
         "about",
         "skills",
+        "linkedIn",
       ]);
     if (!friendsList) {
       return res.json({
@@ -77,7 +79,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       return friend.fromUserId;
     });
     res.json({
-      message: "here is your friend list",
+      message: "your friend list",
       data: data,
     });
   } catch (err) {
@@ -106,16 +108,16 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
     }).select("fromUserId toUserId");
     const hideFromUsers = new Set();
 
+    hideFromUsers.add(loggedInUser?._id.toString());
     connectionEvrMade.forEach((req) => {
       hideFromUsers.add(req.fromUserId.toString());
       hideFromUsers.add(req.toUserId.toString());
     });
-
     const feedUsers = await userModel
       .find({
         _id: { $nin: Array.from(hideFromUsers) },
       })
-      .select("firstName lastName age gender about skills photoUrl")
+      .select("firstName lastName role linkedIn photoUrl emailId about skills")
       .skip(skip)
       .limit(limit);
 
