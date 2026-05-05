@@ -50,7 +50,7 @@ requestRouter.post(
       });
       const genreatedReq = await Connectionreq.save();
       res.json({
-        message: `Successfully a connection request has been sent by ${req.user.firstName} to ${data.firstName}`,
+        message: `Request has been sent to ${data.firstName}`,
         data: genreatedReq,
       });
     } catch (err) {

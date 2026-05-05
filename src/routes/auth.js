@@ -59,7 +59,7 @@ authRouter.post("/login", async (req, res) => {
       const token = await user.getJwtToken();
       res.cookie("token", token);
       res.json({
-        message: "login successful",
+        message: "Login successful",
         data: user,
       });
     }
