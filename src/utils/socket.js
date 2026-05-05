@@ -112,6 +112,7 @@ const initializeSocket = (server) => {
           text: last?.text,
           whosendIt: _id,
           timestamp: last?.createdAt,
+          messageId: last?._id,
         });
       } catch (err) {
         console.log(err);
