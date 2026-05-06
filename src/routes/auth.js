@@ -5,8 +5,6 @@ const userModel = require("../models/user");
 const validator = require("validator");
 const { validateSignUp } = require("../utils/validation.js");
 
-const isProduction = process.env.NODE_ENV === "production";
-
 authRouter.post("/signup", async (req, res) => {
   const { firstName, lastName, emailId, password } = req.body;
   try {
@@ -29,8 +27,6 @@ authRouter.post("/signup", async (req, res) => {
     const token = await user.getJwtToken();
     res.cookie("token", token, {
       httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "None" : "Lax",
     });
     res.json({
       message: "Sign Up successful",
@@ -65,8 +61,6 @@ authRouter.post("/login", async (req, res) => {
       const token = await user.getJwtToken();
       res.cookie("token", token, {
         httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "None" : "Lax",
       });
       res.json({
         message: "Login successful",
