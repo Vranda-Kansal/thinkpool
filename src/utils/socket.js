@@ -15,8 +15,7 @@ const initializeSocket = (server) => {
 
   io.use(async (socket, next) => {
     try {
-      const cookie = socket.handshake.headers.cookie;
-      const token = cookie?.split("token=")[1];
+      const token = socket.handshake.auth?.token;
       if (!token) throw new Error("you are not logged in. please login");
 
       const decoded = jwt.verify(token, process.env.SECRET);

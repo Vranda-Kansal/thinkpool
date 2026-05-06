@@ -33,6 +33,7 @@ authRouter.post("/signup", async (req, res) => {
     res.json({
       message: "Sign Up successful",
       data: user,
+      token,
     });
   } catch (err) {
     if (err.code === 11000) {
@@ -69,6 +70,7 @@ authRouter.post("/login", async (req, res) => {
       res.json({
         message: "Login successful",
         data: user,
+        token,
       });
     }
   } catch (err) {
@@ -82,7 +84,11 @@ authRouter.post("/logout", (req, res) => {
     if (!token) {
       throw new Error("first login then you can logout");
     }
-    res.clearCookie("token");
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
     res.json({
       message: "Logout successful",
     });
