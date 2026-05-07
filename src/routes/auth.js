@@ -90,7 +90,7 @@ authRouter.post("/logout", (req, res) => {
       sameSite: "none",
     });
     res.json({
-      message: "Logout successful",
+      message: "Logout Successful",
     });
   } catch (err) {
     res.status(401).send(err.message);
