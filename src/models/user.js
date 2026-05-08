@@ -85,7 +85,8 @@ Include uppercase, lowercase, number & special character.`);
     about: {
       type: "String",
       trim: true,
-      default: "I am a Developer who can think, explore and grow",
+      default:
+        "Believes in continuous improvement, collaboration, and learning by building real things.",
       set(value) {
         if (value === undefined || value === null) return undefined; // not passed at all → default kicks in
         if (typeof value !== "string") {
